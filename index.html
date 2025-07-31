@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Online Voting System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin: 64px 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: #6b7280;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin: 64px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 8px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+        }
+
+        .btn-outline:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .ballot-container {
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .ballot-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .ballot-header h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .election-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .election-header {
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .election-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .candidate-list {
+            padding: 24px;
+        }
+
+        .candidate {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .candidate:hover {
+            background: #f9fafb;
+        }
+
+        .candidate.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .candidate input[type="radio"] {
+            width: auto;
+            margin: 4px 0 0 0;
+        }
+
+        .candidate-info h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .candidate-party {
+            color: #3b82f6;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .candidate-description {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .vote-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+        }
+
+        .results-container {
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-header h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .candidate-result {
+            flex: 1;
+        }
+
+        .candidate-result h4 {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .leading-badge {
+            background: #3b82f6;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+
+        .vote-stats {
+            text-align: right;
+        }
+
+        .percentage {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .vote-count {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Page -->
+    <div id="home-page">
+        <div class="container">
+            <div class="header">
+                <h1>Secure Online Voting System</h1>
+                <p>A transparent, secure, and accessible platform for democratic participation</p>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <h3>Voter Registration</h3>
+                    <p>Register securely with verified credentials</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure Authentication</h3>
+                    <p>Multi-layer security for voter verification</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗳️</div>
+                    <h3>Digital Voting</h3>
+                    <p>Cast your vote safely and anonymously</p>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <a href="#" class="btn btn-primary" onclick="showPage('register')">Register to Vote</a>
+                <a href="#" class="btn btn-outline" onclick="showPage('login')">Login</a>
+                <p style="margin-top: 16px; color: #6b7280; font-size: 14px;">
+                    Already registered? Login to access your ballot
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Page -->
+    <div id="register-page" class="hidden">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Voter Registration</h2>
+                    <p>Register to participate in upcoming elections</p>
+                </div>
+
+                <div id="register-alert" class="alert hidden"></div>
+
+                <form id="register-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="voterId">Voter ID Number</label>
+                        <input type="text" id="voterId" name="voterId" placeholder="Enter your voter ID" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="district">Electoral District</label>
+                        <select id="district" name="district" required>
+                            <option value="">Select your district</option>
+                            <option value="district-1">District 1 - Downtown</option>
+                            <option value="district-2">District 2 - Northside</option>
+                            <option value="district-3">District 3 - Eastside</option>
+                            <option value="district-4">District 4 - Westside</option>
+                            <option value="district-5">District 5 - Southside</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">I agree to the terms and conditions and confirm that all information provided is accurate</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+                </form>
+
+                <div style="margin-top: 24px; text-align: center; font-size: 14px;">
+                    Already registered? 
+                    <a href="#" class="nav-link" onclick="showPage('login')">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="hidden">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Voter Login</h2>
+                    <p>Access your ballot and cast your vote</p>
+                </div>
+
+                <div id="login-alert" class="alert hidden"></div>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginVoterId">Voter ID Number</label>
+                        <input type="text" id="loginVoterId" name="voterId" placeholder="Enter your voter ID" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                </form>
+
+                <div style="margin-top: 24px; text-align: center; font-size: 14px;">
+                    Not registered yet? 
+                    <a href="#" class="nav-link" onclick="showPage('register')">Register here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voting Page -->
+    <div id="vote-page" class="hidden">
+        <div class="container">
+            <div class="ballot-container">
+                <div class="ballot-header">
+                    <h1>Your Ballot</h1>
+                    <p>Cast your vote in the active elections below</p>
+                </div>
+
+                <div id="vote-alert" class="alert hidden"></div>
+
+                <form id="vote-form">
+                    <!-- Mayor Election -->
+                    <div class="election-card">
+                        <div class="election-header">
+                            <div class="election-title">
+                                Mayor Election 2024
+                                <span class="badge badge-active">⏰ Active</span>
+                            </div>
+                            <p style="color: #6b7280;">Choose your city mayor for the next 4 years</p>
+                        </div>
+                        <div class="candidate-list">
+                            <div class="candidate" onclick="selectCandidate('mayor-2024', 'candidate-1')">
+                                <input type="radio" name="mayor-2024" value="candidate-1" id="mayor-candidate-1">
+                                <div class="candidate-info">
+                                    <h4>Sarah Johnson</h4>
+                                    <div class="candidate-party">Progressive Party</div>
+                                    <div class="candidate-description">Focus on sustainable development and public transportation</div>
+                                </div>
+                            </div>
+                            <div class="candidate" onclick="selectCandidate('mayor-2024', 'candidate-2')">
+                                <input type="radio" name="mayor-2024" value="candidate-2" id="mayor-candidate-2">
+                                <div class="candidate-info">
+                                    <h4>Michael Chen</h4>
+                                    <div class="candidate-party">Unity Coalition</div>
+                                    <div class="candidate-description">Economic growth and infrastructure improvement</div>
+                                </div>
+                            </div>
+                            <div class="candidate" onclick="selectCandidate('mayor-2024', 'candidate-3')">
+                                <input type="radio" name="mayor-2024" value="candidate-3" id="mayor-candidate-3">
+                                <div class="candidate-info">
+                                    <h4>Elena Rodriguez</h4>
+                                    <div class="candidate-party">Community First</div>
+                                    <div class="candidate-description">Education reform and community health initiatives</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- City Council Election -->
+                    <div class="election-card">
+                        <div class="election-header">
+                            <div class="election-title">
+                                City Council District 3
+                                <span class="badge badge-active">⏰ Active</span>
+                            </div>
+                            <p style="color: #6b7280;">Select your district representative</p>
+                        </div>
+                        <div class="candidate-list">
+                            <div class="candidate" onclick="selectCandidate('council-2024', 'council-1')">
+                                <input type="radio" name="council-2024" value="council-1" id="council-candidate-1">
+                                <div class="candidate-info">
+                                    <h4>David Thompson</h4>
+                                    <div class="candidate-party">Independent</div>
+                                    <div class="candidate-description">Local business support and neighborhood safety</div>
+                                </div>
+                            </div>
+                            <div class="candidate" onclick="selectCandidate('council-2024', 'council-2')">
+                                <input type="radio" name="council-2024" value="council-2" id="council-candidate-2">
+                                <div class="candidate-info">
+                                    <h4>Maria Santos</h4>
+                                    <div class="candidate-party">Green Alliance</div>
+                                    <div class="candidate-description">Environmental protection and renewable energy</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vote-actions">
+                        <div style="color: #6b7280; font-size: 14px;">
+                            👥 Make sure to vote in all active elections
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="font-size: 18px; padding: 16px 32px;">
+                            Cast My Votes
+                        </button>
+                    </div>
+                </form>
+
+                <div style="text-align: center; margin-top: 32px;">
+                    <a href="#" class="nav-link" onclick="showPage('results')">View Live Results</a> |
+                    <a href="#" class="nav-link" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="results-page" class="hidden">
+        <div class="container">
+            <div class="results-container">
+                <div class="results-header">
+                    <h1>📊 Election Results</h1>
+                    <p>Live results from ongoing elections</p>
+                </div>
+
+                <!-- Mayor Results -->
+                <div class="election-card">
+                    <div class="election-header">
+                        <div class="election-title">
+                            Mayor Election 2024
+                            <span class="badge badge-active">📈 Live Results</span>
+                        </div>
+                        <p style="color: #6b7280;">👥 15,420 total votes cast</p>
+                    </div>
+                    <div class="candidate-list">
+                        <div class="result-item">
+                            <div class="candidate-result">
+                                <h4><span class="leading-badge">Leading</span> Sarah Johnson</h4>
+                                <div style="color: #6b7280; font-size: 14px;">Progressive Party</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 44.7%"></div>
+                                </div>
+                            </div>
+                            <div class="vote-stats">
+                                <div class="percentage">44.7%</div>
+                                <div class="vote-count">6,890 votes</div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="candidate-result">
+                                <h4>Michael Chen</h4>
+                                <div style="color: #6b7280; font-size: 14px;">Unity Coalition</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 33.9%"></div>
+                                </div>
+                            </div>
+                            <div class="vote-stats">
+                                <div class="percentage">33.9%</div>
+                                <div class="vote-count">5,234 votes</div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="candidate-result">
+                                <h4>Elena Rodriguez</h4>
+                                <div style="color: #6b7280; font-size: 14px;">Community First</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 21.4%"></div>
+                                </div>
+                            </div>
+                            <div class="vote-stats">
+                                <div class="percentage">21.4%</div>
+                                <div class="vote-count">3,296 votes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Council Results -->
+                <div class="election-card">
+                    <div class="election-header">
+                        <div class="election-title">
+                            City Council District 3
+                            <span class="badge badge-active">📈 Live Results</span>
+                        </div>
+                        <p style="color: #6b7280;">👥 8,932 total votes cast</p>
+                    </div>
+                    <div class="candidate-list">
+                        <div class="result-item">
+                            <div class="candidate-result">
+                                <h4><span class="leading-badge">Leading</span> David Thompson</h4>
+                                <div style="color: #6b7280; font-size: 14px;">Independent</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 54.0%"></div>
+                                </div>
+                            </div>
+                            <div class="vote-stats">
+                                <div class="percentage">54.0%</div>
+                                <div class="vote-count">4,821 votes</div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="candidate-result">
+                                <h4>Maria Santos</h4>
+                                <div style="color: #6b7280; font-size: 14px;">Green Alliance</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 46.0%"></div>
+                                </div>
+                            </div>
+                            <div class="vote-stats">
+                                <div class="percentage">46.0%</div>
+                                <div class="vote-count">4,111 votes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 32px; color: #6b7280; font-size: 14px;">
+                    Results are updated in real-time as votes are counted
+                </div>
+
+                <div style="text-align: center; margin-top: 24px;">
+                    <a href="#" class="nav-link" onclick="showPage('vote')">Back to Voting</a> |
+                    <a href="#" class="nav-link" onclick="showPage('home')">Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock database
+        let voters = new Map();
+        let votes = new Map();
+        let currentUser = null;
+
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = ['home-page', 'register-page', 'login-page', 'vote-page', 'results-page'];
+            pages.forEach(page => {
+                document.getElementById(page).classList.add('hidden');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId + '-page').classList.remove('hidden');
+        }
+
+        // Show alert message
+        function showAlert(elementId, message, type = 'error') {
+            const alertElement = document.getElementById(elementId);
+            alertElement.textContent = message;
+            alertElement.className = `alert alert-${type}`;
+            alertElement.classList.remove('hidden');
+            
+            // Hide alert after 5 seconds
+            setTimeout(() => {
+                alertElement.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Registration form handler
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Validation
+            if (!data.firstName || !data.lastName || !data.email || !data.voterId || 
+                !data.dateOfBirth || !data.district || !data.password || !data.confirmPassword) {
+                showAlert('register-alert', 'All fields are required');
+                return;
+            }
+            
+            if (data.password !== data.confirmPassword) {
+                showAlert('register-alert', 'Passwords do not match');
+                return;
+            }
+            
+            if (data.password.length < 8) {
+                showAlert('register-alert', 'Password must be at least 8 characters long');
+                return;
+            }
+            
+            if (!data.terms) {
+                showAlert('register-alert', 'You must agree to the terms and conditions');
+                return;
+            }
+            
+            // Check if voter already exists
+            if (voters.has(data.email) || Array.from(voters.values()).some(voter => voter.voterId === data.voterId)) {
+                showAlert('register-alert', 'A voter with this email or voter ID already exists');
+                return;
+            }
+            
+            // Register voter
+            voters.set(data.email, {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                voterId: data.voterId,
+                dateOfBirth: data.dateOfBirth,
+                district: data.district,
+                password: data.password,
+                hasVoted: false,
+                registeredAt: new Date().toISOString()
+            });
+            
+            showAlert('register-alert', 'Registration successful! You can now login.', 'success');
+            
+            // Clear form
+            this.reset();
+        });
+
+        // Login form handler
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            if (!data.email || !data.password || !data.voterId) {
+                showAlert('login-alert', 'All fields are required');
+                return;
+            }
+            
+            const voter = voters.get(data.email);
+            
+            if (!voter || voter.password !== data.password || voter.voterId !== data.voterId) {
+                showAlert('login-alert', 'Invalid credentials');
+                return;
+            }
+            
+            // Set current user
+            currentUser = voter;
+            
+            // Redirect to voting page
+            showPage('vote');
+        });
+
+        // Vote form handler
+        document.getElementById('vote-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showPage('login');
+                return;
+            }
+            
+            // Check if voter has already voted
+            if (votes.has(currentUser.voterId)) {
+                showAlert('vote-alert', 'You have already cast your vote');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const voterChoices = {};
+            
+            // Collect votes
+            for (const [key, value] of formData.entries()) {
+                if (value) {
+                    voterChoices[key] = value;
+                }
+            }
+            
+            if (Object.keys(voterChoices).length === 0) {
+                showAlert('vote-alert', 'Please make at least one selection');
+                return;
+            }
+            
+            // Store the vote
+            votes.set(currentUser.voterId, {
+                votes: voterChoices,
+                timestamp: new Date().toISOString(),
+                district: currentUser.district
+            });
+            
+            currentUser.hasVoted = true;
+            
+            showAlert('vote-alert', 'Your votes have been successfully cast!', 'success');
+            
+            // Disable form
+            const inputs = this.querySelectorAll('input, button');
+            inputs.forEach(input => input.disabled = true);
+        });
+
+        // Candidate selection handler
+        function selectCandidate(election, candidateId) {
+            // Remove selected class from all candidates in this election
+            const candidates = document.querySelectorAll(`input[name="${election}"]`);
+            candidates.forEach(input => {
+                input.closest('.candidate').classList.remove('selected');
+            });
+            
+            // Select the clicked candidate
+            const selectedInput = document.querySelector(`input[name="${election}"][value="${candidateId}"]`);
+            selectedInput.checked = true;
+            selectedInput.closest('.candidate').classList.add('selected');
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            showPage('home');
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show home page by default
+            showPage('home');
+        });
+    </script>
+</body>
+</html>
